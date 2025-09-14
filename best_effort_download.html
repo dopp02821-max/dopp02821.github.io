@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>云善绘 · 一键下载（增强唤起）</title>
+<style>
+  :root{--blue:#0b67b2;--bg:#f6f9fc}
+  body{margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:var(--bg);color:#123;padding:28px;display:flex;align-items:center;justify-content:center;min-height:100vh}
+  .card{width:100%;max-width:560px;background:#fff;border-radius:12px;box-shadow:0 12px 40px rgba(2,12,34,0.06);padding:26px;text-align:center}
+  h1{margin:6px 0 6px;font-size:20px;color:var(--blue)}
+  p.lead{color:#456;margin:0 0 18px}
+  .btn{display:inline-block;padding:12px 22px;background:var(--blue);color:#fff;border-radius:10px;text-decoration:none;font-weight:700;box-shadow:0 10px 24px rgba(11,103,178,0.14)}
+  .sub{margin-top:12px;color:#6b7785;font-size:13px}
+  .copybtn{margin-left:8px;padding:8px 12px;border-radius:8px;border:1px solid #d7e7ff;background:#f2f8ff;color:var(--blue);text-decoration:none;font-weight:600}
+  .overlay{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;max-width:560px;width:calc(100% - 40px);padding:12px;border-radius:10px;background:#fff8e6;color:#8a5a00;box-shadow:0 6px 20px rgba(0,0,0,0.08);display:none}
+  code{background:#f4f6f8;padding:6px 8px;border-radius:6px;color:#0b67b2}
+</style>
+</head>
+<body>
+  <div class="card" role="main" aria-labelledby="title">
+    <h1 id="title">🌥️ 云善绘 — 一键下载（增强版）</h1>
+    <p class="lead">请点击下面按钮：页面会尽最大可能直接在外部浏览器中打开下载链接（适配多种安卓机型）。</p>
+
+    <a id="openBtn" class="btn" href="#" role="button" aria-label="一键在浏览器中打开并下载">📥 一键在浏览器中打开并下载</a>
+
+    <div class="sub" style="margin-top:18px">
+      下载链接：
+      <code id="linkText">https://az.yushanhui.cc/api/oss/down/local/5/1</code>
+      <a id="copyBtn" class="copybtn" href="#" role="button">复制下载链接</a>
+    </div>
+
+    <p class="sub">若自动唤起失败：请在微信右上角选择「在浏览器中打开」，或点击复制并粘贴到手机浏览器中。</p>
+  </div>
+
+  <div id="overlay" class="overlay">检测到你在微信内打开：请使用右上角菜单选择“在浏览器中打开”，或长按复制打开。</div>
+
+<script>
+(function(){
+  const downloadUrl = "https://az.yushanhui.cc/api/oss/down/local/5/1";
+  const openBtn = document.getElementById('openBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const overlay = document.getElementById('overlay');
+  const linkText = document.getElementById('linkText');
+
+  linkText.textContent = downloadUrl;
+
+  function ua(){ return navigator.userAgent || ''; }
+  function isWeChat(){ return /MicroMessenger/i.test(ua()); }
+  function isAndroid(){ return /Android/i.test(ua()); }
+  function isIOS(){ return /iPhone|iPad|iPod/i.test(ua()); }
+
+  function tryOpenExternal() {
+    if (!isWeChat()) {
+      try { window.open(downloadUrl, '_blank'); } catch(e){ location.href = downloadUrl; }
+      return;
+    }
+    if (isAndroid()) {
+      try {
+        const intentUrl = 'intent://' + downloadUrl.replace(/^https?:\/\//,'') + '#Intent;scheme=https;package=com.android.chrome;end';
+        window.location.href = intentUrl;
+      } catch(e) {}
+      setTimeout(function(){
+        try { window.open(downloadUrl, '_blank'); } catch(e){}
+        try {
+          const ifr = document.createElement('iframe');
+          ifr.style.display = 'none';
+          ifr.src = downloadUrl;
+          document.body.appendChild(ifr);
+          setTimeout(()=>{ document.body.removeChild(ifr); }, 1500);
+        } catch(e){}
+        showOverlay();
+      }, 900);
+      return;
+    }
+    if (isIOS()) {
+      try { window.open(downloadUrl, '_blank'); } catch(e){}
+      showOverlay();
+      return;
+    }
+    try { window.open(downloadUrl, '_blank'); } catch(e){ location.href = downloadUrl; }
+    showOverlay();
+  }
+
+  function showOverlay(){
+    overlay.style.display = 'block';
+    setTimeout(()=>{ overlay.style.display = 'none'; }, 9000);
+  }
+
+  copyBtn.addEventListener('click', function(e){
+    e.preventDefault();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(downloadUrl).then(function(){
+        copyBtn.textContent = '已复制 ✓';
+        setTimeout(()=>{ copyBtn.textContent = '复制下载链接'; }, 2000);
+      }, function(){
+        fallbackCopy();
+      });
+    } else {
+      fallbackCopy();
+    }
+  });
+
+  function fallbackCopy(){
+    const ta = document.createElement('textarea');
+    ta.value = downloadUrl;
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      copyBtn.textContent = '已复制 ✓';
+      setTimeout(()=>{ copyBtn.textContent = '复制下载链接'; }, 2000);
+    } catch(e) {
+      alert('复制失败，请长按链接手动复制：\n' + downloadUrl);
+    }
+    document.body.removeChild(ta);
+  }
+
+  openBtn.addEventListener('click', function(ev){
+    ev.preventDefault();
+    tryOpenExternal();
+  });
+
+  window.addEventListener('load', function(){
+    if (isWeChat()) {
+      setTimeout(()=>{ overlay.style.display = 'block'; }, 800);
+      setTimeout(()=>{ overlay.style.display = 'none'; }, 6000);
+    }
+  });
+})();
+</script>
+</body>
+</html>
