@@ -1,47 +1,77 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>团队专用</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>团队专用入口</title>
   <style>
-    body { font-family: Arial, Helvetica, sans-serif; background:#f5f5f7; color:#333; padding:20px; }
-    .box { max-width:600px; margin:100px auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.08); text-align:center; }
-    .hint { color:#666; font-size:14px; margin-top:8px; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .box {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    input {
+      padding: 10px;
+      width: 200px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      background: #0b67b2;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #094f87;
+    }
   </style>
 </head>
 <body>
   <div class="box">
-    <h3>团队专用</h3>
-    <p id="status">正在请求密码…</p>
-    <p class="hint">如果长期无反应，请用浏览器打开或把页面上传到线上（例如 GitHub Pages）。</p>
+    <h2>请输入团队专用密码</h2>
+    <input type="text" id="password" placeholder="输入密码">
+    <br>
+    <button onclick="checkPassword()">进入</button>
+    <p id="error" style="color:red;display:none;">密码错误！</p>
   </div>
 
-<script>
-(function () {
-  // 可用密码（确保文件以 UTF-8 保存）
-  var validPwds = ["发财","李耀辉","张伟","赵志勇","陈宁","郑刚","周子浩","尹浩宇","郭明辉","陈磊"];
+  <script>
+    function checkPassword() {
+      const pwd = document.getElementById("password").value.trim();
 
-  var statusEl = document.getElementById('status');
+      const links = {
+        "发财": "https://example.com/a",
+        "李耀辉": "https://example.com/b",
+        "张伟": "https://example.com/c",
+        "赵志勇": "https://example.com/d",
+        "陈宁": "https://example.com/e",
+        "郑刚": "https://example.com/f",
+        "周子浩": "https://example.com/g",
+        "尹浩宇": "https://example.com/h",
+        "郭明辉": "https://example.com/i",
+        "陈磊": "https://example.com/j"
+      };
 
-  var userPwd = prompt("团队专用密码：");
-  if (userPwd === null) { // 用户点击取消
-    statusEl.innerText = '已取消输入。';
-    return;
-  }
-
-  userPwd = userPwd.trim(); // 去掉前后空格
-
-  if (validPwds.indexOf(userPwd) !== -1) {
-    statusEl.innerText = '密码正确，正在跳转…';
-    setTimeout(function () {
-      window.location.replace("https://51qu.cn/qKp");
-    }, 300);
-  } else {
-    statusEl.innerText = '密码错误，禁止访问。';
-    alert('密码错误，禁止访问！');
-  }
-})();
-</script>
+      if (links[pwd]) {
+        window.location.href = https://shorturl.asia/SUkbR[pwd];
+      } else {
+        document.getElementById("error").style.display = "block";
+      }
+    }
+  </script>
 </body>
 </html>
