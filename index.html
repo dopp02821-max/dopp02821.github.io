@@ -1,28 +1,47 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>团队专用</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; background:#f5f5f7; color:#333; padding:20px; }
+    .box { max-width:600px; margin:100px auto; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.08); text-align:center; }
+    .hint { color:#666; font-size:14px; margin-top:8px; }
+  </style>
 </head>
 <body>
+  <div class="box">
+    <h3>团队专用</h3>
+    <p id="status">正在请求密码…</p>
+    <p class="hint">如果长期无反应，请用浏览器打开或把页面上传到线上（例如 GitHub Pages）。</p>
+  </div>
+
 <script>
-  // 设置多个可用密码（文字和人名）
-  var validPwds = [
-    "发财", "李耀辉", "张伟", "赵志勇",
-    "陈宁", "郑刚", "周子浩", "尹浩宇",
-    "郭明辉", "陈磊"
-  ];
+(function () {
+  // 可用密码（确保文件以 UTF-8 保存）
+  var validPwds = ["发财","李耀辉","张伟","赵志勇","陈宁","郑刚","周子浩","尹浩宇","郭明辉","陈磊"];
+
+  var statusEl = document.getElementById('status');
 
   var userPwd = prompt("团队专用密码：");
-  if (validPwds.includes(userPwd)) {
-    // 正确 -> 跳转目标链接
-    window.location.href = "https://51qu.cn/qKp";
-  } else {
-    // 错误 -> 提示后关闭页面
-    alert("密码错误，禁止访问！");
-    window.close();
+  if (userPwd === null) { // 用户点击取消
+    statusEl.innerText = '已取消输入。';
+    return;
   }
+
+  userPwd = userPwd.trim(); // 去掉前后空格
+
+  if (validPwds.indexOf(userPwd) !== -1) {
+    statusEl.innerText = '密码正确，正在跳转…';
+    setTimeout(function () {
+      window.location.replace("https://51qu.cn/qKp");
+    }, 300);
+  } else {
+    statusEl.innerText = '密码错误，禁止访问。';
+    alert('密码错误，禁止访问！');
+  }
+})();
 </script>
 </body>
 </html>
